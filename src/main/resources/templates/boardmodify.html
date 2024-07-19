@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" xmlns:th="http://thymeleaf.org">
+  <title>게시물 수정폼</title>
+  <link rel="stylesheet" th:href="@{/css/boardmodify.css}">
+</head>
+<body>
+<div class="layout">
+  <form th:action="@{/board/update/{id}(id=${board.id})}" method="post">
+    <div class="form-group">
+      <input name="title" type="text" th:value="${board.getTitle()}" placeholder="제목을 입력하세요">
+      <span class="additional-text">음란물, 차별, 비하, 혐오 및 초상권, 저작권 침해 게시물은 민, 형사상의 책임을 질 수 있습니다.</span>
+    </div>
+    <textarea name="content" th:text="${board.getContent()}" placeholder="내용을 입력하세요"></textarea>
+    <button type="submit">수정</button>
+  </form>
+</div>
+</body>
+</html>
