@@ -23,14 +23,14 @@ public class Board {
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 
-    private String writer;
+    private String writer; // 작성자 닉네임 미구현
 
     private int view; //조회수
 
     private String filePath;
 
     private String filename;
-    private Long user_id;
+    private Long user_id; // 사용자 id 미구현
 
 
 

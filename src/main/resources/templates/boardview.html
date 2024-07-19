@@ -1,17 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>게시물 보기</title>
     <link rel="stylesheet" th:href="@{/css/boardview.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .title-view {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-count {
+            font-size: 0.8em; /* 작은 글씨로 표시 */
+            color: #666; /* 회색으로 표시 */
+        }
+    </style>
 </head>
 <body>
 <div class="layout">
-    <h1 th:text="${board.title}">제목</h1>
+    <div class="title-view">
+        <h1 th:text="${board.title}">제목</h1>
+        <span class="view-count">
+            <i class="fas fa-eye"></i> <span th:text="${board.view}"></span>
+        </span>
+    </div>
     <p th:text="${board.content}">내용</p>
-    <a th:if="${board.filePath}" th:href="@{${board.filePath}}">사진</a>
-    <a th:href="@{/board/delete(id=${board.id})}"> 삭제 </a>
-    <a th:href="@{/board/modify/{id}(id=${board.id})}"> 수정 </a>
+
+    <div th:if="${board.filePath}">
+        <img th:src="${board.filePath}" alt="Uploaded Image" style="max-width: 100%; height: auto;" />
+    </div>
+
+    <a th:href="@{/board/delete(id=${board.id})}">삭제</a>
+    <a th:href="@{/board/modify/{id}(id=${board.id})}">수정</a>
 </div>
 </body>
 </html>

@@ -9,82 +9,74 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @Controller
+@RequestMapping("/board") // 모든 URL 패턴에 /board를 추가합니다.
 public class BoardController {
-
     @Autowired
     private BoardService boardService;
-    @GetMapping("/board/write")
-    public String boardWriteForm(){
+
+    @GetMapping("/write")
+    public String boardWriteForm() {
         return "boardwrite";
     }
-    @PostMapping("/board/writedo")
-    public String boardWriteDo(Board board , Model model, MultipartFile file) throws IOException {
-        boardService.write(board,file);
 
-        model.addAttribute("message","글 작성이 완료되었습니다.");
-        model.addAttribute("searchUrl","/board/list");
-
+    @PostMapping("/writedo")
+    public String boardWriteDo(Board board, Model model, @RequestParam("file") MultipartFile file) throws IOException {
+        boardService.write(board, file);
+        model.addAttribute("message", "글 작성이 완료되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
         return "message";
     }
-    @GetMapping("/board/list")
-    public String boardList(Model model, String searchKeyword,@PageableDefault(page = 0,size=10,sort = "id",direction = Sort.Direction.DESC) Pageable pageable){
 
-        Page<Board> list=null;
-        if(searchKeyword==null){
-            list= boardService.boardList(pageable);
-        }
-        else{
-            list=boardService.searchList(searchKeyword,pageable);
-        }
+    @GetMapping("/list")
+    public String boardList(Model model, @RequestParam(required = false) String searchKeyword,
+                            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Board> list = searchKeyword == null ? boardService.boardList(pageable) : boardService.searchList(searchKeyword, pageable);
+        int nowPage = list.getPageable().getPageNumber() + 1;
+        int startPage = Math.max(1, nowPage - 4);
+        int endPage = Math.min(nowPage + 5, list.getTotalPages());
 
-        int nowPage=list.getPageable().getPageNumber()+1;
-        int startPage=Math.max(1,nowPage-4);
-        int endPage=Math.min(nowPage+5,list.getTotalPages());
-
-        model.addAttribute("searchKeyword",searchKeyword);
-        model.addAttribute("list",list);
-        model.addAttribute("nowPage",nowPage);
-        model.addAttribute("startPage",startPage);
-        model.addAttribute("endPage",endPage);
+        model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("list", list);
+        model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
 
         return "boardlist";
     }
-    @GetMapping("/board/view")
-    public String boardView(Model model,Long id){
 
-        model.addAttribute("board",boardService.boardView(id));
+    @GetMapping("/view")
+    public String boardView(Model model, @RequestParam("id") Long id) {
+        model.addAttribute("board", boardService.boardView(id));
         return "boardview";
     }
-    @GetMapping("/board/delete")
-    public String boardDelete(Long id,Model model){
-        boardService.boardDelete(id);
 
-        model.addAttribute("message","글 삭제가 완료되었습니다.");
-        model.addAttribute("searchUrl","/board/list");
+    @GetMapping("/delete")
+    public String boardDelete(@RequestParam("id") Long id, Model model) {
+        boardService.boardDelete(id);
+        model.addAttribute("message", "글 삭제가 완료되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
         return "message";
     }
-    @GetMapping("/board/modify/{id}")
-    public String boardModify(@PathVariable("id") Long id,Model model){
-        model.addAttribute("board",boardService.boardView(id));
+
+    @GetMapping("/modify/{id}")
+    public String boardModify(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("board", boardService.boardView(id));
         return "boardmodify";
     }
-    @PostMapping("/board/update/{id}")
-    public String boardUpdate(@PathVariable("id")Long id,Board board,Model model,MultipartFile file) throws IOException {
 
-        Board newBoard=boardService.boardModify(board,id);
-        boardService.write(newBoard,file);
-        model.addAttribute("message","글 수정이 완료되었습니다.");
-        model.addAttribute("searchUrl","/board/list");
+    @PostMapping("/update/{id}")
+    public String boardUpdate(@PathVariable("id") Long id, Board board, Model model, @RequestParam("file") MultipartFile file) throws IOException {
+        Board newBoard = boardService.boardModify(board, id);
+        boardService.update(newBoard, file);
+        model.addAttribute("message", "글 수정이 완료되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
         return "message";
     }
 
 }
-

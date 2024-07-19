@@ -40,3 +40,20 @@ a {
 a:hover {
     text-decoration: underline;
 }
+.title-view {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; /* 제목과 내용 사이의 간격을 추가 */
+}
+
+.view-count {
+    font-size: 0.8em; /* 작은 글씨로 표시 */
+    color: #666; /* 회색으로 표시 */
+    display: flex;
+    align-items: center;
+}
+
+.view-count i {
+    margin-right: 5px; /* 아이콘과 숫자 사이의 간격을 추가 */
+}
